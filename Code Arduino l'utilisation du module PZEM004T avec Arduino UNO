@@ -1,0 +1,49 @@
+#include <PZEM004Tv30.h>
+#include <SoftwareSerial.h>
+
+// Utilise un port série logiciel pour le PZEM
+// Pin 11 Rx (se connecte à la broche Tx du PZEM)
+// Pin 12 Tx (se connecte à la broche Rx du PZEM)
+SoftwareSerial pzemSWSerial(11, 12);
+
+PZEM004Tv30 pzem(pzemSWSerial);
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Lit les données du capteur
+  float voltage = pzem.voltage();
+  float current = pzem.current();
+  float power = pzem.power();
+  float energy = pzem.energy();
+  float frequency = pzem.frequency();
+  float pf = pzem.pf();
+
+  // Vérifie si les données sont valides
+  if(isnan(voltage)){
+      Serial.println("Erreur de lecture de la tension");
+  } else if(isnan(current)){
+      Serial.println("Erreur de lecture du courant");
+  } else if(isnan(power)){
+      Serial.println("Erreur de lecture de la puissance");
+  } else if(isnan(energy)){
+      Serial.println("Erreur de lecture de l'énergie");
+  } else if(isnan(frequency)){
+      Serial.println("Erreur de lecture de la fréquence");
+  } else if(isnan(pf)){
+      Serial.println("Erreur de lecture du facteur de puissance");
+  } else {
+      // Affiche les valeurs sur le moniteur série
+      Serial.print("Tension: ");     Serial.print(voltage);     Serial.println("V");
+      Serial.print("Courant: ");     Serial.print(current);     Serial.println("A");
+      Serial.print("Puissance: ");   Serial.print(power);       Serial.println("W");
+      Serial.print("Energie: ");     Serial.print(energy,3);    Serial.println("kWh");
+      Serial.print("Fréquence: ");   Serial.print(frequency,1); Serial.println("Hz");
+      Serial.print("Facteur de puissance: ");   Serial.println(pf);
+  }
+
+  Serial.println();
+  delay(2000);
+}
